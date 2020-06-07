@@ -64,8 +64,8 @@ See the pldoc documentation for additional information
 ```
 prolog/print_table.pl 		- the print_table module
 prolog/wrap_text.pl 		- wraps an arbitrary text into lines that do not exceed the specified length
-examples/demo.pl 			- a number of examples
-tests/test_wrap.pl 			- unit tests for the wrap_text module
+examples/demo.pl 		- a number of examples
+tests/test_wrap.pl 		- unit tests for the wrap_text module
 
 ```
 
