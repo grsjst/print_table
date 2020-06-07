@@ -51,8 +51,8 @@ In the file `examples\demo.pl` a number of demos are provided
 
 ```swipl
 :- ['./examples/demo.pl']. 	% loads the demo
-:- demo_progress_bar.		% runs demo simple_progress_bar, default_progress_bar and fancy_progress_bar
-:- demo_spinner.			% runs demo simple_spinner, default_spinner and fancy_spinner
+:- test_table1(a).			% runs demo a
+:- test_table1(b)..			% runs demo b
 ```
 
 ## Documentation
@@ -62,7 +62,10 @@ See the pldoc documentation for additional information
 ## Files
 
 ```
-progress_bar.pl - the progress_bar module
-examples/demo.pl - a number of progress_bar and spinner examples
+prolog/print_table.pl - the print_table module
+prolog/wrap_text.pl - wraps an arbitrary text into lines that do not exceed the specified length
+examples/demo.pl - a number of examples
+tests/test_wrap.pl - unit tests for the wrap_text module
+
 ```
 
