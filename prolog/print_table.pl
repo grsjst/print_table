@@ -46,7 +46,7 @@ print_table(Data,[b,c,a],_{b:_{align:right,format:"~2f"}},"Table",mysql,30).
 @license MIT License    
 */
 
-:- use_module(dpei(wrap_text)).
+:- use_module(library(wrap_text)).
 
 :- use_module(library(clpfd)).
 :- use_module(library(debug)).
