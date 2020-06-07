@@ -52,7 +52,7 @@ In the file `examples\demo.pl` a number of demos are provided
 ```swipl
 :- ['./examples/demo.pl']. 	% loads the demo
 :- test_table1(a).			% runs demo a
-:- test_table1(b)..			% runs demo b
+:- test_table1(b).			% runs demo b
 ```
 
 ## Documentation
@@ -62,10 +62,10 @@ See the pldoc documentation for additional information
 ## Files
 
 ```
-prolog/print_table.pl - the print_table module
-prolog/wrap_text.pl - wraps an arbitrary text into lines that do not exceed the specified length
-examples/demo.pl - a number of examples
-tests/test_wrap.pl - unit tests for the wrap_text module
+prolog/print_table.pl 		- the print_table module
+prolog/wrap_text.pl 		- wraps an arbitrary text into lines that do not exceed the specified length
+examples/demo.pl 			- a number of examples
+tests/test_wrap.pl 			- unit tests for the wrap_text module
 
 ```
 
