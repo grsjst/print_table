@@ -69,3 +69,9 @@ tests/test_wrap.pl 		- unit tests for the wrap_text module
 
 ```
 
+## Related and Issues
+
+Similar to `print_table`, the pack `clitable` (see https://www.swi-prolog.org/pack/list?p=clitable) allows for pretty printing a Table structure. However, it doesn't format the table within the available space. 
+
+The performace is influenced by the number of rows in the table.  
+
