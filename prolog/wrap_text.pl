@@ -64,7 +64,10 @@ normalise_text(Mode,Text,NText) :-
 min_wrap_width(Text,Width) :-
     break_text(Text,BrokenText),
     maplist(string_length,BrokenText,WordLengths),
-    max_list(WordLengths,Width).
+    max_list(WordLengths,Width),!.
+
+min_wrap_width(Text,_) :-
+     throw(error(failed_min_wrap(Text),_)).
 
 break_text(Text,BrokenText) :-
     normalise_text(break_text,Text,NText),
@@ -80,14 +83,16 @@ normalise_char(wrap_text,Cs) --> "\t",{atom_codes("   ",Cs)},!.
 normalise_char(wrap_text,Cs) --> "\r",{atom_codes("\n",Cs)},!.
 normalise_char(wrap_text,Cs) --> "\f",{atom_codes("\n",Cs)},!.
 normalise_char(wrap_text,Cs) --> "~",{atom_codes("~~",Cs)},!.
+normalise_char(wrap_text,[]) --> "\240",!. % non-breaking space
+
 
 normalise_char(break_text,Cs) --> "\t",{atom_codes("   ",Cs)},!.
 normalise_char(break_text,[]) --> "\n",!.
 normalise_char(break_text,[]) --> "\r",!.
 normalise_char(break_text,[]) --> "\f",!.
+normalise_char(break_text,[]) --> "\240",!. % non-breaking space
 
 normalise_char(_,[C]) --> [C],!.
-
 
 wrapped_text(Length,Lines) --> lines(Length,Lines).
 
@@ -144,3 +149,6 @@ linebreak --> "\n".
 prolog:error_message(failed_wrap(Width,Text)) -->
     {min_wrap_width(Text,MinWidth)},
     [ 'wrap_text/3 failed - minimally need ~w (~w provided)'-[MinWidth, Width] ].
+
+prolog:error_message(failed_min_wrap(Text)) -->
+    [ 'min_wrap_width/3 unexpectedly failed on "~w" '-[Text] ].
