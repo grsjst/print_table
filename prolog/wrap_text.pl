@@ -76,21 +76,23 @@ break_text(Text,BrokenText) :-
 
 %% normalise input
 normalise_text(Mode,Text) --> normalise_chars(Mode,Cs),{atom_codes(Text,Cs)}.
+normalise_chars(Mode,NCs) --> normalise_char_seq(Mode,CSeq),normalise_chars(Mode,Cs),!,{append(CSeq,Cs,NCs)}.
 normalise_chars(Mode,NCs) --> normalise_char(Mode,C), normalise_chars(Mode,Cs),!,{append(C,Cs,NCs)}.
 normalise_chars(_,[]) --> !.
+
+normalise_char_seq(_,[D1,D2]) --> [D1,160,D2],{char_type(D1,digit),char_type(D2,digit)},!. 
 
 normalise_char(wrap_text,Cs) --> "\t",{atom_codes("   ",Cs)},!.
 normalise_char(wrap_text,Cs) --> "\r",{atom_codes("\n",Cs)},!.
 normalise_char(wrap_text,Cs) --> "\f",{atom_codes("\n",Cs)},!.
 normalise_char(wrap_text,Cs) --> "~",{atom_codes("~~",Cs)},!.
-normalise_char(wrap_text,[]) --> "\240",!. % non-breaking space
-
+normalise_char(wrap_text,Cs) --> "\240",{atom_codes(" ",Cs)},!. % non-breaking space
 
 normalise_char(break_text,Cs) --> "\t",{atom_codes("   ",Cs)},!.
 normalise_char(break_text,[]) --> "\n",!.
 normalise_char(break_text,[]) --> "\r",!.
 normalise_char(break_text,[]) --> "\f",!.
-normalise_char(break_text,[]) --> "\240",!. % non-breaking space
+normalise_char(break_text,Cs) --> "\240",{atom_codes(" ",Cs)},!. % non-breaking space
 
 normalise_char(_,[C]) --> [C],!.
 
