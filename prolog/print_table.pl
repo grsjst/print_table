@@ -276,7 +276,8 @@ pre_process_table(Keys,Data,ColumnsSpec,Table) :-
     pre_process_rows(TableData0,TableRows),
     transpose(TableRows,TableColumns0),
     pre_process_columns(TableColumns0,TableColumns),
-    transpose(TableColumns,Table),!.
+    transpose(TableColumns,Table),
+    !.
 
 pre_process_rows(Rows,NRows) :-
     length(Rows,N), N = 2,!,
@@ -319,11 +320,9 @@ table_to_cell_rows(Keys,TableData,ColumnsSpec,NTable) :-
     cell_template(CellTemplate0),
     findall(NRow,
         (
-            member(Row,TableData),
             nth0(RowIndex,TableData,Row),
             findall(Cell,
                 (
-                    member(Key,Keys),
                     nth0(ColumnIndex,Keys,Key),
                     (UserTemplate = ColumnsSpec.get(Key) -> CellTemplate = CellTemplate0.put(UserTemplate) ; CellTemplate = CellTemplate0),
                     Value = Row.get(Key),
@@ -332,8 +331,11 @@ table_to_cell_rows(Keys,TableData,ColumnsSpec,NTable) :-
                     string_length(FormattedValue,Length),
                     min_wrap_width(FormattedValue,MinWidth),
                     Cell = CellTemplate.put(_{key:Key,content:Value,format:FormatTemplate,formatted_content:FormattedValue,length:Length,min_width:MinWidth,row:RowIndex,column:ColumnIndex})
-                ),NRow)
-        ),NTable).
+                ),NRow),
+            true
+            % assertion((dict_keys(Row,Ks),forall(member(K,Ks),(member(Cell,NRow),Cell.key = K))))
+        ),NTable),
+    assertion((length(TableData,N),length(NTable,N))).
  
 set_class(_,[],[]) :- !.   
 set_class(Class,[Cell|Cells],[NCell|NCells]) :-
@@ -468,7 +470,8 @@ row_lines(RowLines,Template) --> {
 
 % defaults
 content(Content) --> {Content = date(_,_,_),!, format_time(string(DStr),"%Y-%m-%d",Content)},content(DStr,"~w").
-content(Content) --> {number(Content),!},content(Content,"~d").
+content(Content) --> {integer(Content),!},content(Content,"~d").
+content(Content) --> {float(Content),!},content(Content,"~2f").
 content(Content) --> content(Content,"~w").
 
 content(Content,"") --> !,content(Content).
