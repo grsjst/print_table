@@ -5,7 +5,8 @@ print_table is a Pack for SWI-Prolog (https://www.swi-prolog.org/) that formats 
 
 These are few examples: 
 ```swipl
-?- Data = [_{a:11,b:0.001,c:13},_{a:21,b:2.12,c:23},_{a:31,b:12.1111,c:33}],                                                             print_table(Data,[b,c,a],_{b:_{align:right,format:"~2f"}},"Table",mysql,30).
+?- Data = [_{a:11,b:0.001,c:13},_{a:21,b:2.12,c:23},_{a:31,b:12.1111,c:33}],
+	print_table(Data,[b,c,a],_{b:_{align:right,format:"~2f"}},"Table",mysql,30).
 
 %       Table (3 records) 
 %      +-------+----+----+
