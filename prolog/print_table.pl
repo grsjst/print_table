@@ -1,4 +1,5 @@
 :- module(print_table, [
+    force_print_table/1,
     print_table/1, 
     print_table/2, 
     print_table/3, 
@@ -50,6 +51,9 @@ print_table(Data,[b,c,a],_{b:_{align:right,format:"~2f"}},"Table",mysql,30).
 
 :- use_module(library(clpfd)).
 :- use_module(library(debug)).
+:- debug(print_table).
+:- debug(print_table,"print_table pack loaded",[]).
+
 %:- debug(print_table_style).
 %:- debug(print_table_format).
 %:- debug(print_table_label).
@@ -99,6 +103,14 @@ cell_style(github, stylesheet{
     default :       _{border_left:"|",padding_left:1, padding_right:1}
     }).
 
+force_print_table(Data) :-
+    dicts_to_same_keys(Data, dict_fill(null), CData),
+    dicts_same_keys(CData,Keys),
+    ColumnsSpec = _{},
+    Caption = "Table ",
+    Style = default,
+    MaxWidth is 5000,
+    print_table(Data,Keys,ColumnsSpec,Caption,Style,MaxWidth).
 
 %%  print_table(+Data:list(dict)) is det.
 %%  print_table(+Data:list(dict), +Keys:list(atom)) is det.
@@ -131,7 +143,8 @@ cell_style(github, stylesheet{
 %    
 
 print_table(Data) :-
-    dicts_same_keys(Data,Keys),
+    dicts_to_same_keys(Data,dict_fill(null),NData),
+    dicts_same_keys(NData,Keys),
     print_table(Data,Keys).
 
 print_table(Data,Keys) :-
@@ -156,10 +169,22 @@ print_table(Data,Keys,ColumnsSpec,Caption,Style,MaxWidth) :-
     must_be(list(atom),Keys),
     must_be(dict,ColumnsSpec),
     must_be(positive_integer,MaxWidth),
-    normalise_table(Keys,Data,NKeys,NData),
+    add_row_number(Data,Data1),
+    normalise_table(Keys,Data1,NKeys,NData),
     catch_with_backtrace(
         format_table(NKeys,NData,Style,ColumnsSpec,MaxWidth,Table),Error,print_message(error, Error)),
     print_message(informational,print_table(table(Table,Caption,MaxWidth))).
+
+
+add_row_number(Records,NRecords) :- 
+    add_row_number(Records,1,NRecords).
+
+add_row_number([],_,[]) :- !. 
+add_row_number([Record|Records],N,[NRecord|NRecords]) :-
+    NRecord = Record.put(row_number,N),
+    NN is N + 1,
+    add_row_number(Records,NN,NRecords).
+
 
 %%  normalise_table(Keys,Table,NTable)
 %   ensures Keys and Data are defined
@@ -478,5 +503,6 @@ content(Content,"") --> !,content(Content).
 content(Content,Template) --> {format(string(Str),Template,[Content])},Str.
 
 prolog:error_message(insufficient_width(_,Width)) -->
-    [ 'Insufficient width to print table (provided: ~w)'-[Width] ].
+    [ 'Insufficient width to print table (provided: ~w) -> use \'force_print_table/1\' to ignore max terminal width'-[Width] ].
+
 
